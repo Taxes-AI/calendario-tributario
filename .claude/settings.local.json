@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(gsd:plan-phase)",
+      "WebSearch",
+      "Bash(node:*)",
+      "Bash(do [:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(test:*)",
+      "Skill(gsd:resume-work)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

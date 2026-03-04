@@ -1,0 +1,194 @@
+// Calendario Tributario - Prisma Schema for MongoDB
+// Prisma 6.x (MongoDB support NOT available in Prisma 7)
+// All models use @id @default(auto()) @map("_id") @db.ObjectId for MongoDB ObjectId
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────
+// Better Auth required models
+// ─────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions       Session[]
+  accounts       Account[]
+  empresa        Empresa?
+  notificaciones Notificacion[]
+}
+
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId                String    @db.ObjectId
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────
+// Application models (seed data targets)
+// ─────────────────────────────────────────────────────
+
+model CalendarioTributario {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  anio             Int
+  impuesto         String
+  concepto         String
+  periodicidad     String   // MENSUAL, BIMESTRAL, CUATRIMESTRAL, ANUAL
+  resolucionFuente String?
+  activo           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  fechasVencimiento FechaVencimiento[]
+  obligaciones      ObligacionTributaria[]
+}
+
+model FechaVencimiento {
+  id                     String   @id @default(auto()) @map("_id") @db.ObjectId
+  calendarioTributarioId String   @db.ObjectId
+  anio                   Int
+  periodo                String
+  digitoNit              String
+  fechaLimite            DateTime
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  calendarioTributario CalendarioTributario @relation(fields: [calendarioTributarioId], references: [id])
+
+  @@index([anio, digitoNit])
+  @@index([calendarioTributarioId])
+}
+
+model FestivoColombiano {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  anio      Int
+  fecha     DateTime
+  nombre    String
+  tipo      String   // FIJO or EMILIANI
+  createdAt DateTime @default(now())
+
+  @@index([anio])
+  @@unique([anio, fecha])
+}
+
+model ConfiguracionSistema {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  clave       String   @unique
+  valor       String
+  anio        Int?
+  descripcion String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────
+// Onboarding and Matching Engine models
+// ─────────────────────────────────────────────────────
+
+model Empresa {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId              String    @unique @db.ObjectId
+  tipoEmpresa         String?   // NATURAL, JURIDICA
+  regimen             String?   // ORDINARIO, SIMPLE, ESPECIAL
+  tamano              String?   // GRANDE, MEDIANO, PEQUENO, MICRO
+  nit                 String?   // Base number only (no DV, no formatting)
+  digitoVerificacion  String?   // Computed DV (stored for display convenience)
+  ciiu                String?   // 4-digit CIIU code
+  ciudad              String?   // BOGOTA, MEDELLIN, CALI, BARRANQUILLA, OTRO
+  rangoIngresos       String?   // RANGO_1 through RANGO_5
+  razonSocial         String?   // Business name
+  onboardingStep      Int       @default(0)  // Last completed step (0-4)
+  onboardingComplete  Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  obligaciones ObligacionTributaria[]
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ObligacionTributaria {
+  id                       String    @id @default(auto()) @map("_id") @db.ObjectId
+  empresaId                String    @db.ObjectId
+  calendarioTributarioId   String    @db.ObjectId
+  impuesto                 String    // Denormalized from CalendarioTributario for query convenience
+  periodo                  String    // "202601", "2026", etc.
+  fechaVencimiento         DateTime
+  estado                   String    @default("PENDIENTE") // PENDIENTE, PROXIMO, VENCIDO, PAGADO
+  fechaPago                DateTime?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  empresa              Empresa              @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  calendarioTributario CalendarioTributario @relation(fields: [calendarioTributarioId], references: [id])
+  notificaciones       Notificacion[]
+
+  @@index([empresaId])
+  @@index([empresaId, estado])
+  @@index([estado, fechaVencimiento])
+}
+
+// ─────────────────────────────────────────────────────
+// Notification models
+// ─────────────────────────────────────────────────────
+
+model Notificacion {
+  id                       String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId                   String   @db.ObjectId
+  obligacionTributariaId   String   @db.ObjectId
+  threshold                Int      // 15, 7, 3, 1, or 0 (0 = overdue/VENCIDA)
+  tipo                     String   // RECORDATORIO, VENCIDA
+  mensaje                  String   // e.g. "IVA Bimestral -- vence en 3 dias (6 de marzo)"
+  leida                    Boolean  @default(false)
+  createdAt                DateTime @default(now())
+
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  obligacionTributaria     ObligacionTributaria @relation(fields: [obligacionTributariaId], references: [id], onDelete: Cascade)
+
+  @@unique([obligacionTributariaId, threshold])
+  @@index([userId, leida])
+  @@index([userId, createdAt])
+}
