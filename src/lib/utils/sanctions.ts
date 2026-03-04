@@ -1,6 +1,6 @@
 // Art. 641 Estatuto Tributario Colombia -- Penalty calculations
 import { UVT_2026 } from "./constants";
-import { daysUntilDeadline } from "./dates";
+// import { daysUntilDeadline } from "./dates"; // TODO: May be used for future penalty calculation features
 import { formatCOP } from "./currency";
 import type { ObligationStatus } from "./obligation-helpers";
 
