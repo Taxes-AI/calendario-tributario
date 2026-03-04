@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { ProfileForm } from "@/components/profile/profile-form";
 
 export const metadata: Metadata = {
-  title: "Perfil de empresa | Calendario Tributario",
+  title: "Perfil de empresa | Contably",
 };
 
 export default async function PerfilPage() {

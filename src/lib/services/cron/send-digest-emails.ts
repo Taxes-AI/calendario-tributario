@@ -60,7 +60,7 @@ export async function sendDigestEmails(): Promise<{ sent: number; users: number 
     });
 
     emails.push({
-      from: "Calendario Tributario <noreply@resend.dev>",
+      from: "Contably <noreply@resend.dev>",
       to: [user.email],
       subject: `Recordatorio: ${uniqueObligations.length} obligacion${uniqueObligations.length !== 1 ? "es" : ""} tributaria${uniqueObligations.length !== 1 ? "s" : ""} proxima${uniqueObligations.length !== 1 ? "s" : ""}`,
       html: buildDigestHtml(user.name, uniqueObligations),

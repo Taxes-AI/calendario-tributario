@@ -7,7 +7,7 @@ import { DashboardClient } from "@/components/dashboard/dashboard-client";
 import { EmptyState } from "@/components/dashboard/empty-state";
 
 export const metadata: Metadata = {
-  title: "Panel de control | Calendario Tributario",
+  title: "Panel de control | Contably",
 };
 
 export default async function DashboardPage() {

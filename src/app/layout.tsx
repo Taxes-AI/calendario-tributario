@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Calendario Tributario",
+  title: "Contably",
   description: "Gestiona tus obligaciones tributarias DIAN",
 };
 

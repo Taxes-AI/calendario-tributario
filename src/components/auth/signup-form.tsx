@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -35,8 +36,8 @@ const signupSchema = z
 type SignupFormData = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -70,32 +71,7 @@ export function SignupForm() {
       return;
     }
 
-    setIsLoading(false);
-    setSuccess(true);
-  }
-
-  if (success) {
-    return (
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl">Revisa tu correo</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">
-            Te enviamos un correo de verificacion. Revisa tu bandeja de entrada y
-            haz clic en el enlace para activar tu cuenta.
-          </p>
-        </CardContent>
-        <CardFooter>
-          <Link
-            href="/login"
-            className="text-sm text-primary hover:underline"
-          >
-            Ir a iniciar sesion
-          </Link>
-        </CardFooter>
-      </Card>
-    );
+    router.push("/onboarding");
   }
 
   return (

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { LoginForm } from "@/components/auth/login-form";
 
 export const metadata: Metadata = {
-  title: "Iniciar sesion | Calendario Tributario",
+  title: "Iniciar sesion | Contably",
 };
 
 export default async function LoginPage({

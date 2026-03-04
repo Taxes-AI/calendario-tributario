@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { SancionesClient } from "@/components/sanciones/sanciones-client";
 
 export const metadata: Metadata = {
-  title: "Calculadora de Sanciones | Calendario Tributario",
+  title: "Calculadora de Sanciones | Contably",
 };
 
 export default async function SancionesPage({

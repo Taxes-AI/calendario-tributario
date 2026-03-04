@@ -50,14 +50,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
 
     if (result.error) {
       setIsLoading(false);
-      if (
-        result.error.code === "EMAIL_NOT_VERIFIED" ||
-        result.error.message?.toLowerCase().includes("verif")
-      ) {
-        setError("Debes verificar tu correo antes de iniciar sesion.");
-      } else {
-        setError("Correo o contrasena incorrectos.");
-      }
+      setError("Correo o contrasena incorrectos.");
       return;
     }
 
@@ -106,7 +99,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col gap-4">
+        <CardFooter className="flex flex-col gap-4 pt-4">
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Ingresando..." : "Iniciar sesion"}
           </Button>

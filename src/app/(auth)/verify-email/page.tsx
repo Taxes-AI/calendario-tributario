@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Verificar correo | Calendario Tributario",
+  title: "Verificar correo | Contably",
 };
 
 export default async function VerifyEmailPage({

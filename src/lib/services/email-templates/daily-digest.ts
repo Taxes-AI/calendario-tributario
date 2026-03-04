@@ -41,7 +41,7 @@ export function buildDigestHtml(
 
   return `
     <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; padding: 24px;">
-      <h2 style="color: #111827; margin-bottom: 4px;">Calendario Tributario</h2>
+      <h2 style="color: #111827; margin-bottom: 4px;">Contably</h2>
       <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
 
       <p style="color: #111827; font-size: 15px;">Hola ${userName},</p>
@@ -67,7 +67,7 @@ export function buildDigestHtml(
       </div>
 
       <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 32px;">
-        Este es un recordatorio automatico de Calendario Tributario.
+        Este es un recordatorio automatico de Contably.
       </p>
     </div>
   `;
